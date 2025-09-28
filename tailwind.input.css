@@ -1,0 +1,6 @@
+@source "./index.html";
+@source "./src/**/*.{ts,tsx}";
+@source "./components/**/*.{ts,tsx}";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

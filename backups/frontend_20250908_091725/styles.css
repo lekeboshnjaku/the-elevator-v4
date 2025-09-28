@@ -1,0 +1,436 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('assets/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('assets/fonts/Inter-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body, #root {
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/*
+  NOTE:
+  Font files (e.g., anton-v25-latin-regular.woff2) should be placed in a /fonts/ directory.
+  These can be downloaded from services like Google Fonts Helper.
+*/
+
+/* --- THEME STYLES --- */
+
+/* --------------------------------------------------------- */
+/*  Brand Design Tokens (dark-teal theme with neon accents)  */
+/* --------------------------------------------------------- */
+:root {
+  /* Palette */
+  --bg-from: #050B10;
+  --bg-to:   #0C1F2E;
+  --accent:  #00F6FF;
+  --success: #49FF4A;
+  --loss:    #FF3B3B;
+  --lossAlt: #FF3BC0;
+  --neutral: #9AA5B1;
+
+  /* Shape */
+  --radius: 8px;
+  
+  /* Control Panel Colors */
+  --ctrl-bg: #091F38;
+  --ctrl-border: #03E7F0;
+  --ctrl-glow-outer: #0D2844;
+  --ctrl-glow-inner: #07213D;
+  --btn-start: #08A5B7;
+  --btn-end: #00BCC4;
+  --btn-hover-start: #44ECFF;
+  --btn-hover-end: #15B5D1;
+  --btn-active-start: #20CCE3;
+  --btn-active-end: #0C95B2;
+  --indicator-fill: #025973;
+  --indicator-glow-outer: #033150;
+  --indicator-glow-inner: #02667D;
+}
+
+/* Global canvas ----------------------------------------------------------- */
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(180deg, var(--bg-from), var(--bg-to));
+  color: #E5F2FF;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Utility helpers                                                   */
+/* ------------------------------------------------------------------ */
+.glass-panel {
+  backdrop-filter: saturate(140%) blur(8px);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(0, 0, 0, 0.25)
+  );
+  border: 1px solid rgba(154, 165, 177, 0.18);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(5, 11, 16, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.controls-panel { 
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.25)), var(--ctrl-bg);
+  border: 1px solid var(--ctrl-border);
+  box-shadow: 0 12px 30px rgba(5, 11, 16, 0.6), 0 0 12px var(--ctrl-glow-outer), inset 0 0 10px var(--ctrl-glow-inner);
+}
+
+.control-field {
+  border-color: var(--ctrl-border) !important;
+  box-shadow: 0 0 12px var(--ctrl-glow-outer), inset 0 0 6px var(--ctrl-glow-inner) !important;
+}
+
+.hero-button {
+  border-radius: var(--radius);
+  background: linear-gradient(
+    180deg,
+    var(--btn-start),
+    var(--btn-end)
+  );
+  color: #001318;
+  text-shadow: 0 0 10px rgba(0, 246, 255, 0.65);
+  box-shadow: 0 12px 30px rgba(0, 246, 255, 0.25),
+    0 0 20px rgba(0, 246, 255, 0.35) inset;
+  border-bottom: 4px solid rgba(0, 55, 60, 0.9);
+  transition: all 120ms ease;
+}
+.hero-button:hover {
+  filter: brightness(1.05);
+  background: linear-gradient(
+    180deg,
+    var(--btn-hover-start),
+    var(--btn-hover-end)
+  );
+  box-shadow: 0 16px 40px rgba(0, 246, 255, 0.35),
+    0 0 28px rgba(0, 246, 255, 0.6) inset;
+}
+.hero-button:active {
+  transform: translateY(1px) scale(0.99);
+  background: linear-gradient(
+    180deg,
+    var(--btn-active-start),
+    var(--btn-active-end)
+  );
+}
+
+.indicator-cyan {
+  background: var(--indicator-fill) !important;
+  box-shadow: 0 0 12px var(--indicator-glow-outer), 0 0 18px var(--indicator-glow-inner) !important;
+}
+
+.pill-toggle {
+  border-radius: 9999px;
+  border: 1px solid rgba(154, 165, 177, 0.2);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(0, 0, 0, 0.25)
+  );
+}
+
+.neon   { text-shadow: 0 0 12px rgba(0, 246, 255, 0.70); }
+.accent { color: var(--accent) !important; }
+.success{ color: var(--success) !important; text-shadow: 0 0 10px rgba(73,255,74,0.55); }
+.loss   { color: var(--loss)   !important; text-shadow: 0 0 10px rgba(255,59,59,0.55); }
+
+.frame {
+  border-radius: var(--radius);
+  border: 1px solid rgba(154, 165, 177, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 10px 30px rgba(5, 11, 16, 0.5);
+  background: radial-gradient(
+    120% 120% at 50% 0%,
+    rgba(0, 246, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0) 40%
+  );
+}
+
+@keyframes orange-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(251, 146, 60, 0.4), 0 0 25px rgba(251, 146, 60, 0.3), inset 0 0 5px rgba(255, 255, 255, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(251, 146, 60, 0.6), 0 0 40px rgba(251, 146, 60, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+    transform: scale(1.02);
+  }
+}
+.animate-orange-pulse-glow {
+  animation: orange-pulse-glow 2.5s infinite ease-in-out;
+}
+
+/* --- AMBIENT PULSE ANIMATIONS --- */
+@keyframes cyan-pulse-border {
+  0%, 100% {
+    border-color: rgba(34, 211, 238, 0.3);
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.15), inset 0 0 8px rgba(34, 211, 238, 0.1);
+  }
+  50% {
+    border-color: rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 25px rgba(34, 211, 238, 0.25), inset 0 0 12px rgba(34, 211, 238, 0.15);
+  }
+}
+.animate-cyan-pulse-border {
+  animation: cyan-pulse-border 5s infinite ease-in-out;
+}
+
+.text-glow-cyan { text-shadow: 0 0 8px rgba(34, 211, 238, 0.8), 0 0 12px rgba(34, 211, 238, 0.5); }
+.text-glow-green { text-shadow: 0 0 8px rgba(74, 222, 128, 0.8), 0 0 12px rgba(74, 222, 128, 0.5); }
+.text-glow-red { text-shadow: 0 0 8px rgba(239, 68, 68, 0.8), 0 0 12px rgba(239, 68, 68, 0.5); }
+
+
+/* Orbitron */
+@font-face {
+  font-family: 'Orbitron';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: block;
+  src: url('assets/fonts/orbitron-v31-latin-variable-wght.woff2') format('woff2');
+}
+
+/* Extracted from components for cleaner code */
+.elevator-cables::before, .elevator-cables::after {
+    content: '';
+    position: absolute;
+    top: -100vh;
+    bottom: 95%;
+    width: 3px;
+    background-color: #1e293b;
+    z-index: -1;
+}
+.grated-floor {
+    background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 5px);
+}
+.elevator-window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4.5rem; /* 72px */
+    height: 4.5rem; /* 72px */
+    background-color: rgba(2, 6, 23, 0.5); /* bg-slate-950/50 */
+    border: 8px solid #1e293b; /* slate-800, thicker gasket for porthole look */
+    border-radius: 50%;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+    overflow: hidden;
+}
+.elevator-window::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 45%,
+      transparent 50%
+    );
+    transform: rotate(45deg);
+}
+
+.text-glow-gold { text-shadow: 0 0 8px rgba(251, 191, 36, 0.8), 0 0 12px rgba(251, 191, 36, 0.5); }
+.text-glow-purple { text-shadow: 0 0 8px rgba(168, 85, 247, 0.8), 0 0 12px rgba(56, 189, 248, 0.5); }
+
+.neon-border-cyan { border-color: rgba(34, 211, 238, 0.45) !important; box-shadow: 0 0 12px rgba(34, 211, 238, 0.25), inset 0 0 6px rgba(34, 211, 238, 0.12); }
+.neon-border-gold { border-color: rgba(251, 191, 36, 0.55) !important; box-shadow: 0 0 14px rgba(251, 191, 36, 0.3), inset 0 0 7px rgba(251, 191, 36, 0.18); }
+.neon-border-purple { border-color: rgba(168, 85, 247, 0.45) !important; box-shadow: 0 0 12px rgba(168, 85, 247, 0.25), inset 0 0 6px rgba(168, 85, 247, 0.12); }
+.neon-border-red { border-color: rgba(239, 68, 68, 0.45) !important; box-shadow: 0 0 12px rgba(239, 68, 68, 0.25), inset 0 0 6px rgba(239, 68, 68, 0.12); }
+
+.neon-card-bg { background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 12px 12px; }
+
+@keyframes unlock-pulse { 0% { box-shadow: 0 0 0 rgba(34, 211, 238, 0.0); transform: translateY(0); } 50% { box-shadow: 0 0 24px rgba(34, 211, 238, 0.35); transform: translateY(-1px); } 100% { box-shadow: 0 0 0 rgba(34, 211, 238, 0.0); transform: translateY(0); } }
+.animate-unlock-once { animation: unlock-pulse 900ms ease-out 1; }
+
+/* ------------------------------------------------------------------ */
+/*  Toast Icon Helpers                                                */
+/* ------------------------------------------------------------------ */
+/* Ensure SVG icons inside toast icon wrappers are block-level so
+   they align perfectly in the centre without baseline offset issues. */
+.toast-icon svg {
+  display: block;
+}
+
+/* ------------------------------------------------------------------ */
+/*  NEW: Electric-Blue Pulse & Dot-Pop Animations                     */
+/* ------------------------------------------------------------------ */
+
+@keyframes blue-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.35),
+                0 0 25px rgba(56, 189, 248, 0.25),
+                inset 0 0 5px rgba(255, 255, 255, 0.15);
+    transform: translateZ(0) scale(1);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.55),
+                0 0 40px rgba(56, 189, 248, 0.45),
+                inset 0 0 10px rgba(255, 255, 255, 0.20);
+    transform: translateZ(0) scale(1.02);
+  }
+}
+.animate-blue-pulse-glow {
+  animation: blue-pulse-glow 2.5s infinite ease-in-out;
+}
+
+@keyframes dot-pop {
+  0%   { transform: scale(0);   opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+.animate-dot-pop {
+  animation: dot-pop 400ms ease-out both;
+}
+
+/* ------------------------------------------------------------------ */
+/*  NEW: Neon Round Button (small circular control)                   */
+/* ------------------------------------------------------------------ */
+
+.neon-round-btn {
+  /* size will be controlled by width/height on the element */
+  border-radius: 9999px;
+  cursor: pointer;
+  border: 1px solid rgba(0, 246, 255, 0.5);
+  background: radial-gradient(circle at 30% 30%, rgba(0, 246, 255, 0.25) 0%, rgba(0, 140, 148, 0.25) 100%);
+  box-shadow:
+    0 0 8px rgba(0, 246, 255, 0.25),
+    0 0 12px rgba(0, 246, 255, 0.25) inset;
+  transition: all 140ms ease;
+  color: var(--accent);
+}
+
+.neon-round-btn:hover {
+  filter: brightness(1.1);
+  box-shadow:
+    0 0 12px rgba(0, 246, 255, 0.35),
+    0 0 18px rgba(0, 246, 255, 0.35) inset;
+}
+
+/* State modifier for active / toggled-on */
+.neon-round-btn--active {
+  background: radial-gradient(circle at 30% 30%, rgba(0, 246, 255, 0.35) 0%, rgba(0, 140, 148, 0.35) 100%);
+  border-color: var(--accent);
+  box-shadow:
+    0 0 14px rgba(0, 246, 255, 0.45),
+    0 0 22px rgba(0, 246, 255, 0.35) inset;
+  filter: brightness(1.15);
+}
+
+/* ------------------------------------------------------------------ */
+/*  NEW: Cyan Icon Glow Pulse (for hexagon-star achievement icon)      */
+/* ------------------------------------------------------------------ */
+
+@keyframes cyan-icon-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.35))
+            drop-shadow(0 0 2px rgba(34, 211, 238, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.75))
+            drop-shadow(0 0 6px rgba(34, 211, 238, 0.50));
+  }
+}
+
+.icon-glow-cyan          { color: #22d3ee; }
+.animate-cyan-icon-pulse { animation: cyan-icon-pulse 2.4s ease-in-out infinite; }
+
+/* ------------------------------------------------------------------ */
+/*  NEW: Achievement Toast Styles                                     */
+/* ------------------------------------------------------------------ */
+
+.toast-panel {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: saturate(140%) blur(6px);
+  border-radius: var(--radius);
+}
+
+.toast-neon-frame {
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  box-shadow: 0 0 20px rgba(0, 246, 255, 0.35), inset 0 0 14px rgba(0, 246, 255, 0.18);
+  outline: 2px solid rgba(0, 246, 255, 0.55);
+  outline-offset: 2px;
+}
+
+.toast-icon-ring {
+  border: 1px solid rgba(0, 246, 255, 0.5);
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 246, 255, 0.15) 0%, rgba(0, 140, 148, 0.15) 100%);
+  box-shadow: 0 0 10px rgba(0, 246, 255, 0.25) inset;
+  color: var(--accent);
+}
+
+.toast-title {
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(0, 246, 255, 0.8), 0 0 12px rgba(0, 246, 255, 0.5);
+  font-weight: bold;
+}
+
+@keyframes toast-pop-in {
+  0% { opacity: 0; transform: scale(0.9); }
+  70% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes toast-pop-out {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.9); }
+}
+
+.animate-toast-pop-in { animation: toast-pop-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+.animate-toast-pop-out { animation: toast-pop-out 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards; }
+
+/* Responsive utility shims for environments without Tailwind at runtime */
+@media (min-width: 640px) {
+  .sm\:flex { display: flex; }
+  .sm\:block { display: block; }
+  .sm\:w-64 { width: 16rem; }
+  .sm\:h-80 { height: 20rem; }
+  .sm\:py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+  .sm\:py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+  .sm\:pt-7 { padding-top: 1.75rem; }
+  .sm\:pb-3 { padding-bottom: 0.75rem; }
+  .sm\:text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+  .sm\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+  .sm\:p-4 { padding: 1rem; }
+  .sm\:space-y-4 > :not([hidden]) ~ :not([hidden]) { --tw-space-y-reverse: 0; margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse))); margin-bottom: calc(1rem * var(--tw-space-y-reverse)); }
+  .sm\:w-11 { width: 2.75rem; }
+  .sm\:h-11 { height: 2.75rem; }
+  .sm\:w-5 { width: 1.25rem; }
+  .sm\:h-5 { height: 1.25rem; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:flex { display: flex; }
+  .lg\:hidden { display: none; }
+  .lg\:w-80 { width: 20rem; }
+  .lg\:h-96 { height: 24rem; }
+  .lg\:py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+}
+
+@media (min-width: 1280px) {
+  .xl\:gap-16 { gap: 4rem; }
+  .xl\:px-8 { padding-left: 2rem; padding-right: 2rem; }
+  .xl\:w-96 { width: 24rem; }
+  .xl\:max-w-lg { max-width: 32rem; }
+  .xl\:max-w-\[300px\] { max-width: 300px; }
+  .xl\:h-\[480px\] { height: 480px; }
+}

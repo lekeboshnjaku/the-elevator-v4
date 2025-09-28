@@ -1,0 +1,5 @@
+{
+  "name": "The Elevator",
+  "description": "A casino-style Limbo game with an elevator theme. Players bet on a target multiplier for a chance to win. This is a simulation and does not involve real money.",
+  "requestFramePermissions": []
+}

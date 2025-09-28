@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Elevator</title>
+    <!-- Tailwind CDN for utility classes (matches dev server on :8000) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./styles.bundle.css">
+    <!-- Preload intro asset so the splash screen starts immediately -->
+    <link rel="preload" as="video" href="./assets/intro.mp4" crossorigin>
+    <link rel="preload" as="image" href="./assets/intro.png">
+    <!--
+      PRODUCTION NOTE:
+      All JavaScript and dependencies have been bundled into /dist/bundle.js.
+      Custom fonts are loaded locally from /styles.css to comply with XSS policies.
+    -->
+</head>
+  <body>
+    <div id="root"></div>
+    <script defer src="./dist/bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "game_id": "the-elevator",
+  "modes": [
+    {
+      "name": "fifty_fifty",
+      "cost": 1.0,
+      "events": "books_base.jsonl.zst",
+      "weights": "lookUpTable_base_0.csv",
+      "template": {
+        "name": "limbo"
+      },
+      "params": {
+        "rtp": 0.99,
+        "min_multiplier": 1.01,
+        "max_multiplier": 1000000,
+        "precision": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Elevator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!--
+      PRODUCTION NOTE:
+      All JavaScript and dependencies have been bundled into /dist/bundle.js.
+      Custom fonts are loaded locally from /styles.css to comply with XSS policies.
+    -->
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-950">
+    <div id="root"></div>
+    <!-- Stake Engine Math SDK for Provably Fair Verification -->
+    <script src="https://unpkg.com/@stake-engine/math-sdk@latest/dist/browser.js"></script>
+
+    <!-- Patch: convert any GET /play call to POST with JSON body -->
+    <script>
+    (function() {
+      const origFetch = window.fetch;
+      window.fetch = function(input, init) {
+        try {
+          const reqUrl = typeof input === 'string' ? input : (input && input.url);
+          if (reqUrl && /\/play(\?|$)/.test(reqUrl)) {
+            const urlObj = new URL(reqUrl, window.location.origin);
+            const qp = Object.fromEntries(urlObj.searchParams.entries());
+
+            const nextInit = Object.assign({}, init);
+            nextInit.method = 'POST';
+            const baseHeaders = (init && init.headers) || {};
+            nextInit.headers = Object.assign({}, baseHeaders, { 'Content-Type': 'application/json' });
+
+            let base = {};
+            try {
+              if (init && init.body) base = JSON.parse(init.body);
+            } catch {}
+
+            const payload = Object.assign({}, base, {
+              mode: base.mode || qp.mode || 'fifty_fifty',
+              currency: base.currency || qp.currency || 'USD',
+              client_seed: base.client_seed || localStorage.getItem('client_seed') || 'seed'
+            });
+            if (base.wager != null) payload.wager = base.wager;
+            else if (qp.wager != null) payload.wager = Number(qp.wager);
+            if (base.session) payload.session = base.session;
+            else if (qp.session) payload.session = qp.session;
+
+            nextInit.body = JSON.stringify(payload);
+            const strippedUrl = reqUrl.split('?')[0];
+
+            if (typeof input === 'string') {
+              return origFetch.call(this, strippedUrl, nextInit);
+            } else if (input && input.url) {
+              return origFetch.call(this, strippedUrl, nextInit);
+            }
+          }
+        } catch (e) {
+          /* swallow and fall through */
+        }
+        return origFetch.apply(this, arguments);
+      };
+    })();
+    </script>
+
+    <script defer src="/dist/bundle.js"></script>
+</body>
+</html>

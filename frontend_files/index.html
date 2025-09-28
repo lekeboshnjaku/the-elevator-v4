@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Elevator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!--
+      PRODUCTION NOTE:
+      All JavaScript and dependencies have been bundled into /dist/bundle.js.
+      Custom fonts are loaded locally from /styles.css to comply with XSS policies.
+    -->
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-950">
+    <div id="root"></div>
+    <!-- Stake Engine Math SDK for Provably Fair Verification -->
+    <script src="https://unpkg.com/@stake-engine/math-sdk@latest/dist/browser.js"></script>
+
+    <!-- Patch v4: route /wallet/authenticate & /wallet/play to dynamic RGS URL, force POST -->
+    <script>
+(function(){
+  try {
+    const PLAY_RE = /(\/(wallet\/)?play)(?:\\?|$)/i;
+    const AUTH_RE = /(\/(wallet\/)?authenticate)(?:\\?|$)/i;
+    const originalFetch = typeof window.fetch === 'function' ? window.fetch.bind(window) : null;
+    const XHR = window.XMLHttpRequest;
+
+    /* --- discover rgs_url and session from launch querystring --- */
+    const launchQS = new URLSearchParams(location.search);
+    let RGS_BASE = launchQS.get('rgs_url') || launchQS.get('rgsUrl') || launchQS.get('rgs') || null;
+    let sessionToken = launchQS.get('session') || launchQS.get('session_id') || null;
+    try { if (RGS_BASE) RGS_BASE = new URL(RGS_BASE).origin; } catch(_) {}
+
+    /* build minimal body */
+    function buildBodyFromUrl(url){
+      const u = new URL(url, location.origin);
+      const qs = u.searchParams;
+      return {
+        mode: qs.get('mode') || 'fifty_fifty',
+        currency: qs.get('currency') || 'USD',
+        client_seed: qs.get('client_seed') || qs.get('clientSeed') || localStorage.getItem('client_seed') || '',
+        session: sessionToken || qs.get('session') || ''
+      };
+    }
+
+    /* convert to full RGS endpoint */
+    function toRgs(url, kind){
+      const base = RGS_BASE || new URL(url, location.origin).origin;
+      const path = kind === 'auth' ? '/wallet/authenticate' : '/wallet/play';
+      try { return new URL(path, base).href; } catch { return path; }
+    }
+
+    function captureSessionFromJson(obj){
+      if (!obj) return;
+      if (obj.session || obj.token || obj.access_token){
+        sessionToken = obj.session || obj.token || obj.access_token;
+      }
+      if (!RGS_BASE && (obj.rgs_url || obj.rgsUrl)){
+        try { RGS_BASE = new URL(obj.rgs_url || obj.rgsUrl).origin; } catch{}
+      }
+    }
+
+    async function maybeCapture(resp){
+      try {
+        const ct = resp.headers?.get('content-type') || '';
+        if (!ct.includes('application/json')) return;
+        const data = await resp.clone().json().catch(()=>null);
+        captureSessionFromJson(data);
+      } catch {}
+    }
+
+    /* ------------ fetch override ------------- */
+    if (originalFetch){
+      window.fetch = async function(input, init){
+        const req = new Request(input, init);
+        const url = new URL(req.url, location.origin);
+
+        if (AUTH_RE.test(url.pathname)){
+          const headers = new Headers(init?.headers||{});
+          headers.set('Content-Type','application/json');
+          const newReq = new Request(toRgs(url.href,'auth'),{
+            method:'POST',
+            headers,
+            body: JSON.stringify(buildBodyFromUrl(url.href)),
+            credentials: req.credentials||'include',
+            redirect: req.redirect||'follow',
+            mode: req.mode||'cors',
+            cache:'no-cache'
+          });
+          const r = await originalFetch(newReq); maybeCapture(r); return r;
+        }
+
+        if (PLAY_RE.test(url.pathname)){
+          const headers = new Headers(init?.headers||{});
+          headers.set('Content-Type','application/json');
+          /* if we don't yet have a session token treat the first /play as authenticate */
+          const kind = (sessionToken ? 'play' : 'auth');
+          const newReq = new Request(toRgs(url.href, kind),{
+            method:'POST',
+            headers,
+            body: JSON.stringify(buildBodyFromUrl(url.href)),
+            credentials: req.credentials||'include',
+            redirect: req.redirect||'follow',
+            mode: req.mode||'cors',
+            cache:'no-cache'
+          });
+          return originalFetch(newReq);
+        }
+        return originalFetch(req);
+      };
+    }
+
+    /* ------------ XHR override ------------- */
+    if (XHR && XHR.prototype){
+      const origOpen = XHR.prototype.open;
+      const origSend = XHR.prototype.send;
+
+      XHR.prototype.open = function(method,url){
+        this.__se_method = String(method||'GET').toUpperCase();
+        this.__se_url   = url;
+        try {
+          const u = new URL(url, location.origin);
+          this.__se_isPlay = PLAY_RE.test(u.pathname);
+          this.__se_isAuth = AUTH_RE.test(u.pathname);
+        } catch { this.__se_isPlay = this.__se_isAuth = false; }
+        return origOpen.apply(this, arguments);
+      };
+
+      XHR.prototype.send = function(body){
+        /* handle auth */
+        if (this.__se_isAuth){
+          this.addEventListener('load',()=>{ try { const ct=this.getResponseHeader?.('content-type')||''; if (ct.includes('application/json')&&this.responseText) captureSessionFromJson(JSON.parse(this.responseText)); }catch{} });
+          try{
+            origOpen.call(this,'POST',toRgs(this.__se_url,'auth'),true);
+            try{ this.setRequestHeader('Content-Type','application/json'); }catch{}
+            return origSend.call(this, JSON.stringify(buildBodyFromUrl(this.__se_url)));
+          }catch{}
+        }
+        /* handle play */
+        if (this.__se_isPlay){
+          try{
+            /* if we don't yet have a session token treat this first call as authenticate */
+            const kind = (sessionToken ? 'play' : 'auth');
+            origOpen.call(this,'POST',toRgs(this.__se_url, kind),true);
+            try{ this.setRequestHeader('Content-Type','application/json'); }catch{}
+            return origSend.call(this, JSON.stringify(buildBodyFromUrl(this.__se_url)));
+          }catch{}
+        }
+        return origSend.apply(this, arguments);
+      };
+    }
+
+    console.info('the-elevator v4 patch loaded',{RGS_BASE,hasSession:!!sessionToken});
+  } catch(e){ console.error('v4 patch error',e); }
+})();
+    </script>
+
+    <script defer src="dist/bundle.v4.js?v=4"></script>
+</body>
+</html>

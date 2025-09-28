@@ -1,0 +1,29 @@
+Verifying Limbo math in: C:\Users\HomeTech PC\the-elevator\stake_engine_upload\math
+
+Validating index.json...
+[OK] index.json valid
+  - Events file: game_logic.jsonl.zst
+  - Weights file: lookup_table.csv
+
+Loading lookup table CSV...
+[OK] Loaded 99905 rows from CSV
+
+Computing RTP...
+[OK] CSV Statistics:
+  - Total rows: 99,905
+  - Total weight: 29,603,960,316
+  - Min multiplier: 0
+  - Max multiplier: 100,000,000
+  - Inferred scale: 10,000,000
+  - RTP: 0.000035 (0.0035%)
+  - House edge: 0.999965 (99.9965%)
+[WARN] RTP 0.000035 differs from expected 0.990000 by 0.989965
+
+Comparing with JSONL...
+[OK] JSONL comparison completed
+  - JSONL lines: 99,905
+  - Counts match: Yes
+  - Values match: Yes
+
+Verification summary:
+[FAIL] RTP is outside acceptable range (0.98-1.0)

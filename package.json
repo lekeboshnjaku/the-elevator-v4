@@ -1,0 +1,40 @@
+{
+  "name": "the-elevator-v2",
+  "version": "1.0.0",
+  "description": "A casino-style Limbo game with an elevator theme. Players bet on a target multiplier for a chance to win. This is a simulation and does not involve real money.",
+  "main": "index.js",
+  "scripts": {
+    "start": "serve \"stake_engine_upload/frontend\" -p 3000",
+    "build:css": "npx @tailwindcss/cli -i ./tailwind.input.css -o ./styles.tailwind.css --minify",
+    "build": "webpack --config webpack.config.js",
+    "typecheck": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
+    "build:math": "math_sdk_project\\env\\Scripts\\python.exe math_sdk_project\\games\\limbo_game\\run.py",
+    "serve:front": "serve \"stake_engine_upload/frontend\" -p 3000",
+    "deploy:front": "node tools/deploy-frontend.js",
+    "sync:front": "node tools/sync-front.js",
+    "watch:front": "node tools/watch-front.js"
+  },
+  "dependencies": {
+    "@fontsource/anton": "^5.2.6",
+    "@fontsource/chakra-petch": "^5.2.6",
+    "@fontsource/orbitron": "^5.2.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.23.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "serve": "^14.2.4",
+    "tailwindcss": "^4.1.12",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.5.3",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  }
+}
