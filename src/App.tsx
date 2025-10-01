@@ -703,14 +703,6 @@ const App: React.FC = () => {
                     <section className={`flex h-full max-w-[480px] flex-shrink-0 flex-col items-center justify-center xl:max-w-lg`}>
                         <div className={`flex flex-col items-center relative w-full gap-4 ${game.isBonusBuy ? 'panel-cyan-outline panel-cyan-glow rounded-xl p-1' : ''}`}>
                           <div className="relative w-44 sm:w-64 lg:w-80 xl:w-96 flex items-center justify-center">
-                            {/* Info icon to open Rules */}
-                            <button
-                              onClick={() => setRulesOpen(true)}
-                              className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-slate-900/70 border border-cyan-400/50 text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.35)] hover:bg-slate-800/70 active:scale-95"
-                              aria-label="Game Rules"
-                            >
-                              i
-                            </button>
                             <ElevatorIndicator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
                           </div>
                           <Elevator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
@@ -752,14 +744,6 @@ const App: React.FC = () => {
                         <section className="flex w-full max-w-lg flex-col items-center self-center">
                             <div className="flex flex-col items-center relative w-full gap-4">
                                 <div className="relative w-44 sm:w-64 flex items-center justify-center">
-                                    {/* Info icon (mobile) */}
-                                    <button
-                                      onClick={() => setRulesOpen(true)}
-                                      className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-slate-900/70 border border-cyan-400/50 text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.35)] hover:bg-slate-800/70 active:scale-95"
-                                      aria-label="Game Rules"
-                                    >
-                                      i
-                                    </button>
                                     <ElevatorIndicator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
                                 </div>
                                 <Elevator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
