@@ -133,6 +133,8 @@ const Elevator: React.FC<ElevatorProps> = ({
 
             {/* Elevator Door Container */}
             <div className="absolute inset-2 overflow-hidden rounded-t-md shadow-[0_0_20px_rgba(0,246,255,0.35),_inset_0_0_14px_rgba(0,246,255,0.18)]">
+                {/* Center door seam */}
+                <div className="pointer-events-none absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] bg-black z-20"></div>
                 {/* Left Door */}
                 <div
                 className="absolute top-0 bottom-0 left-0 w-1/2 bg-slate-700 transition-transform ease-in-out"
@@ -166,6 +168,17 @@ const Elevator: React.FC<ElevatorProps> = ({
                 ></div>
                 </div>
             </div>
+
+            {/* Idle ambient light beams (subtle) */}
+            {gameStatus === GameStatus.IDLE && (
+                <div className="pointer-events-none absolute inset-2 rounded-t-md overflow-hidden">
+                    <style>{`
+                        @keyframes ambientSweep { 0%{opacity:.06; transform:translateX(-120%)} 50%{opacity:.12} 100%{opacity:.06; transform:translateX(120%)} }
+                    `}</style>
+                    <div className="absolute top-[10%] bottom-[10%] left-0 w-1/2 skew-x-[-12deg] bg-gradient-to-r from-white/5 via-white/8 to-transparent"
+                         style={{ animation: 'ambientSweep 6s linear infinite' }} />
+                </div>
+            )}
 
             {/* Left Light Bar */}
             <div className="absolute top-1/2 -translate-y-1/2 left-[-18px] h-[86%] w-[10px] rounded-full bg-gradient-to-b from-[#5CF1FF] via-[#4BE8FF] to-[#5CF1FF] shadow-[0_0_24px_6px_rgba(0,246,255,0.35)]"></div>

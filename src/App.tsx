@@ -622,8 +622,13 @@ const App: React.FC = () => {
 
                 <div className="relative z-10 flex flex-1 flex-col items-center min-h-0">
                     <header className="relative z-20 flex w-full flex-shrink-0 items-center justify-between p-4">
-                    <div className="bg-slate-900/50 px-3 py-2.5 rounded-lg flex items-center gap-2 border border-slate-700/50 shadow-md">
-                        <span className="text-cyan-300 font-bold text-lg" style={{ textShadow: '0 0 6px rgba(34,211,238,0.9), 0 0 14px rgba(34,211,238,0.6)' }}>
+                    <div className="px-4 py-3 rounded-xl flex items-center gap-2 border shadow-md"
+                         style={{
+                           background: 'rgba(2,6,23,0.6)',
+                           borderColor: 'rgba(34,211,238,0.45)',
+                           boxShadow: '0 0 16px rgba(34,211,238,0.25)'
+                         }}>
+                        <span className="text-cyan-300 font-bold text-2xl" style={{ textShadow: '0 0 6px rgba(34,211,238,0.9), 0 0 14px rgba(34,211,238,0.6)' }}>
                         {formatCurrency(game.balance)}
                         </span>
                     </div>
@@ -695,13 +700,21 @@ const App: React.FC = () => {
                     <aside className="w-full max-w-[250px] flex-shrink-0 xl:max-w-[300px]">
                         <StatsAndHistoryPanel history={game.history} sessionProfit={game.sessionProfit} formatCurrency={formatCurrency} />
                     </aside>
-                    <section className="flex h-full max-w-[480px] flex-shrink-0 flex-col items-center justify-center xl:max-w-lg">
-                        <div className="flex flex-col items-center relative w-full gap-4">
-                        <div className="w-44 sm:w-64 lg:w-80 xl:w-96 flex items-center justify-center">
+                    <section className={`flex h-full max-w-[480px] flex-shrink-0 flex-col items-center justify-center xl:max-w-lg`}>
+                        <div className={`flex flex-col items-center relative w-full gap-4 ${game.isBonusBuy ? 'panel-cyan-outline panel-cyan-glow rounded-xl p-1' : ''}`}>
+                          <div className="relative w-44 sm:w-64 lg:w-80 xl:w-96 flex items-center justify-center">
+                            {/* Info icon to open Rules */}
+                            <button
+                              onClick={() => setRulesOpen(true)}
+                              className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-slate-900/70 border border-cyan-400/50 text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.35)] hover:bg-slate-800/70 active:scale-95"
+                              aria-label="Game Rules"
+                            >
+                              i
+                            </button>
                             <ElevatorIndicator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
-                        </div>
-                        <Elevator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
-                        <RecentResultsBar history={game.history} />
+                          </div>
+                          <Elevator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
+                          <RecentResultsBar history={game.history} formatCurrency={formatCurrency} />
                         </div>
                     </section>
                     <aside className="w-full max-w-[250px] flex-shrink-0 xl:max-w-[300px]">
@@ -738,7 +751,15 @@ const App: React.FC = () => {
                         {/* Elevator section */}
                         <section className="flex w-full max-w-lg flex-col items-center self-center">
                             <div className="flex flex-col items-center relative w-full gap-4">
-                                <div className="w-44 sm:w-64 flex items-center justify-center">
+                                <div className="relative w-44 sm:w-64 flex items-center justify-center">
+                                    {/* Info icon (mobile) */}
+                                    <button
+                                      onClick={() => setRulesOpen(true)}
+                                      className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-slate-900/70 border border-cyan-400/50 text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.35)] hover:bg-slate-800/70 active:scale-95"
+                                      aria-label="Game Rules"
+                                    >
+                                      i
+                                    </button>
                                     <ElevatorIndicator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
                                 </div>
                                 <Elevator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
@@ -785,7 +806,7 @@ const App: React.FC = () => {
                         
                         {/* Recent Results section */}
                         <section className="w-full max-w-lg self-center mt-auto">
-                            <RecentResultsBar history={game.history} />
+                            <RecentResultsBar history={game.history} formatCurrency={formatCurrency} />
                         </section>
                     </div>
 
