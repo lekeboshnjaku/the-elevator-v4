@@ -698,11 +698,11 @@ const App: React.FC = () => {
                     </header>
 
                     {/* Desktop Layout */}
-                    <div className="relative hidden h-full w-full max-w-[1600px] justify-center px-4 lg:flex xl:px-8 items-center desktop-3col">
+                    <div className="relative hidden h-full w-full max-w-[1600px] justify-center px-4 lg:flex xl:px-8 desktop-3col">
                     <aside className="w-full max-w-[250px] flex-shrink-0 xl:max-w-[300px] desktop-left">
                         <StatsAndHistoryPanel history={game.history} sessionProfit={game.sessionProfit} formatCurrency={formatCurrency} />
                     </aside>
-                    <section className={`flex h-full max-w+[480px] flex-shrink-0 flex-col items-center justify-center xl:max-w-lg`}>
+                    <section className={`desktop-center flex h-full flex-shrink-0 flex-col items-center justify-center`}>
                         <div className={`flex flex-col items-center relative w-full gap-4 ${game.isBonusBuy ? 'panel-cyan-outline panel-cyan-glow rounded-xl p-1' : ''}`}>
                           {game.isBonusBuy && (
                             <div className="absolute top-2 right-2 z-20 text-[10px] sm:text-xs tracking-wide px-2 py-1 rounded-full bg-gradient-to-r from-cyan-500/20 to-amber-300/20 text-cyan-200 border border-cyan-300/30 shadow-[0_0_8px_rgba(0,246,255,0.25)]">
