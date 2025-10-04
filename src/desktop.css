@@ -1,0 +1,37 @@
+/* Desktop responsive, scoped, minimal, non-invasive */
+
+/* Edge gutters/safe area padding for main app wrapper */
+.desktop-root {
+  padding-left: max(24px, env(safe-area-inset-left));
+  padding-right: max(24px, env(safe-area-inset-right));
+  padding-top: max(24px, env(safe-area-inset-top));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+/* Desktop three-column integrity, fixed gaps */
+@media (min-width: 1100px) and (pointer: fine) {
+  .desktop-3col {
+    display: flex;
+    flex-direction: row;
+    gap: max(5vw, 24px);
+    align-items: stretch;
+  }
+  .desktop-3col > * { min-width: 0; }
+
+  .desktop-left {
+    min-width: 280px;
+    overflow-y: auto;
+  }
+
+  .desktop-right {
+    min-width: 300px;
+    overflow-y: auto;
+  }
+}
+
+/* Ensure interactive elements keep a reasonable size on desktop */
+button, [role="button"], input[type="button"], input[type="submit"], .btn {
+  min-height: 44px;
+  min-width: 44px;
+}

@@ -6,9 +6,10 @@ interface ElevatorIndicatorProps {
     lastResult: HistoryEntry | null;
     targetMultiplier: string;
     isInstantBet: boolean;
+    isElevateActive?: boolean;
 }
 
-const ElevatorIndicator: React.FC<ElevatorIndicatorProps> = ({ gameStatus, lastResult, targetMultiplier, isInstantBet }) => {
+const ElevatorIndicator: React.FC<ElevatorIndicatorProps> = ({ gameStatus, lastResult, targetMultiplier, isInstantBet, isElevateActive = false }) => {
     const [floor, setFloor] = useState(0);
     const [pulse, setPulse] = useState(false);
     const [flash, setFlash] = useState(false);
@@ -60,6 +61,15 @@ const ElevatorIndicator: React.FC<ElevatorIndicatorProps> = ({ gameStatus, lastR
 
     let content: React.ReactNode;
     let textColorClass = 'accent neon';
+    const gradientNumberStyle: React.CSSProperties = isElevateActive
+        ? {
+            background: 'linear-gradient(90deg, #ffd36a 0%, #5ce9ff 100%)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            color: 'transparent',
+            textShadow: '0 0 14px rgba(255,211,106,0.35), 0 0 12px rgba(92,233,255,0.35)'
+          }
+        : {};
 
     switch (gameStatus) {
         case GameStatus.PLAYING:
@@ -68,14 +78,14 @@ const ElevatorIndicator: React.FC<ElevatorIndicatorProps> = ({ gameStatus, lastR
                 content = (
                     <>
                         <p className="text-sm uppercase tracking-widest opacity-70">Resolving...</p>
-                        <p className="text-5xl font-bold leading-none -mt-1 transition-transform duration-300">{parseFloat(targetMultiplier).toFixed(2)}x</p>
+                        <p className="text-5xl font-bold leading-none -mt-1 transition-transform duration-300" style={gradientNumberStyle}>{parseFloat(targetMultiplier).toFixed(2)}x</p>
                     </>
                 );
             } else {
                 content = (
                     <>
                         <p className="text-sm uppercase tracking-widest opacity-70">Ascending...</p>
-                        <p className="text-5xl font-bold leading-none -mt-1 transition-transform duration-300">{floor.toFixed(2)}x</p>
+                        <p className="text-5xl font-bold leading-none -mt-1 transition-transform duration-300" style={gradientNumberStyle}>{floor.toFixed(2)}x</p>
                     </>
                 );
             }
@@ -102,7 +112,7 @@ const ElevatorIndicator: React.FC<ElevatorIndicatorProps> = ({ gameStatus, lastR
              content = (
                 <>
                     <p className="text-sm uppercase tracking-widest opacity-70">Target</p>
-                    <p className="text-5xl font-bold leading-none -mt-1 transition-transform duration-300">{parseFloat(targetMultiplier).toFixed(2)}x</p>
+                    <p className="text-5xl font-bold leading-none -mt-1 transition-transform duration-300" style={gradientNumberStyle}>{parseFloat(targetMultiplier).toFixed(2)}x</p>
                 </>
             );
             break;
