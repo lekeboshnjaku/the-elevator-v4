@@ -34,7 +34,7 @@ interface ControlsProps {
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
         onClick={onClick}
-        className={`inline-flex py-2.5 text-sm font-bold uppercase tracking-wider transition-all relative px-3 text-center min-h-[44px] min-w-[100px] touch-manipulation`}
+        className={`btn inline-flex py-2.5 text-sm font-bold uppercase tracking-wider transition-all relative px-3 text-center min-h-[44px] min-w-[100px] touch-manipulation`}
         style={{
             color: active ? 'var(--accent)' : 'var(--neutral)',
         }}
@@ -129,7 +129,10 @@ const ManualBetPanel: React.FC<
     };
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-3 betting-actions">
+            <style>{`
+              @keyframes neonPulseStrong { 0%{ box-shadow:0 0 10px rgba(34,211,238,0.35), 0 0 18px rgba(34,211,238,0.25) } 50%{ box-shadow:0 0 22px rgba(34,211,238,0.6), 0 0 34px rgba(255,220,124,0.35) } 100%{ box-shadow:0 0 10px rgba(34,211,238,0.35), 0 0 18px rgba(34,211,238,0.25) } }
+            `}</style>
             <InputField 
                 label={props.t('betAmount')} 
                 value={displayBetValue} 
@@ -137,8 +140,9 @@ const ManualBetPanel: React.FC<
                 disabled={props.isAutoBetting} 
                 isInvalid={props.isBetAmountInvalid} 
             />
-            {/* Quick-bet buttons: 2-col on very small screens, 4-col from sm up */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {/* Quick-bet buttons: wrapped with betting row hooks for mobile spacing */}
+            <div className="betting-row betting-row--quick">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
                 <QuickButtonPanel>
                     <BetControlButton onClick={() => handleBetAmountAction('min')} disabled={props.isAutoBetting}>Min</BetControlButton>
                 </QuickButtonPanel>
@@ -151,6 +155,7 @@ const ManualBetPanel: React.FC<
                 <QuickButtonPanel>
                     <BetControlButton onClick={() => handleBetAmountAction('x2')} disabled={props.isAutoBetting}>x2</BetControlButton>
                 </QuickButtonPanel>
+              </div>
             </div>
              <div className="grid grid-cols-2 gap-3">
                 {/* Left column: Target input */}
@@ -173,11 +178,15 @@ const ManualBetPanel: React.FC<
              <button
               type="button"
               onClick={handleElevateToggle}
-              className={`elevate-hero-btn w-full py-3 sm:py-4 text-base sm:text-lg font-bold uppercase tracking-wider ${
-                props.isBonusBuy ? 'elevate-hero-btn--active animate-cyan-pulse-soft' : ''
+              className={`btn elevate-hero-btn relative w-full py-3 sm:py-4 text-base sm:text-lg font-bold uppercase tracking-wider ${
+                props.isBonusBuy ? 'elevate-hero-btn--active' : ''
               }`}
+              style={props.isBonusBuy ? { animation: 'neonPulseStrong 1.6s ease-in-out infinite', filter: 'drop-shadow(0 0 8px rgba(34,211,238,0.45))' } : undefined}
             >
               Elevate Mode
+              {props.isBonusBuy && (
+                <span className="pointer-events-none absolute inset-0 rounded-md" style={{ boxShadow: '0 0 16px rgba(34,211,238,0.35) inset' }} />
+              )}
             </button>
         </div>
     );
@@ -324,7 +333,7 @@ const BetControlButton: React.FC<{ onClick: () => void; children: React.ReactNod
     <button
         onClick={onClick}
         disabled={disabled}
-        className="w-full h-full min-h-[44px] min-w-[100px] rounded-xl bg-[#0b0f1c] border border-cyan-400/60 text-white text-[0.95rem] sm:text-base font-[Orbitron] tracking-wider flex items-center justify-center select-none touch-manipulation transition-all duration-200 ease-out shadow-[0_0_10px_rgba(0,246,255,0.25)] drop-shadow-[0_0_6px_rgba(255,255,255,0.55)] hover:bg-gradient-to-br hover:from-cyan-400/20 hover:via-blue-500/20 hover:to-fuchsia-500/20 hover:shadow-[0_0_18px_rgba(0,246,255,0.45)] hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.7)] hover:scale-[1.06] active:scale-95 active:shadow-[0_0_24px_rgba(0,246,255,0.6)] disabled:opacity-50 disabled:hover:bg-[#0b0f1c] disabled:hover:shadow-[0_0_10px_rgba(0,246,255,0.25)]"
+        className="btn w-full h-full min-h-[44px] min-w-[100px] rounded-xl bg-[#0b0f1c] border border-cyan-400/60 text-white text-[0.95rem] sm:text-base font-[Orbitron] tracking-wider flex items-center justify-center select-none touch-manipulation transition-all duration-200 ease-out shadow-[0_0_10px_rgba(0,246,255,0.25)] drop-shadow-[0_0_6px_rgba(255,255,255,0.55)] hover:bg-gradient-to-br hover:from-cyan-400/20 hover:via-blue-500/20 hover:to-fuchsia-500/20 hover:shadow-[0_0_18px_rgba(0,246,255,0.45)] hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.7)] hover:scale-[1.06] active:scale-95 active:shadow-[0_0_24px_rgba(0,246,255,0.6)] disabled:opacity-50 disabled:hover:bg-[#0b0f1c] disabled:hover:shadow-[0_0_10px_rgba(0,246,255,0.25)]"
     >
         {children}
     </button>
@@ -384,9 +393,9 @@ const Controls: React.FC<ControlsProps> = (props) => {
 
   return (
     <div className="w-full flex flex-col gap-3.5">
-        <div className={`w-full glass-panel controls-panel rounded-lg ${props.isBonusBuy ? 'panel-cyan-glow panel-cyan-outline' : ''}`}>
+        <div className={`w-full glass-panel controls-panel betting-panel rounded-lg ${props.isBonusBuy ? 'panel-cyan-glow panel-cyan-outline' : ''}`}>
             <div className="flex justify-between items-center border-b-2 border-slate-950/50">
-                <div className="relative flex flex-wrap lg:flex-nowrap items-center flex-1 gap-2 sm:gap-4 pl-3">
+                <div className="toggle-group betting-actions relative flex flex-wrap lg:flex-nowrap items-center flex-1 gap-2 sm:gap-4 pl-3">
                     <TabButton active={activeTab === 'manual'} onClick={() => setActiveTab('manual')}>{t('manual')}</TabButton>
                     <TabButton active={activeTab === 'auto'} onClick={() => setActiveTab('auto')}>{t('auto')}</TabButton>
                     <TabButton active={false} onClick={props.openRules}>Rules</TabButton>

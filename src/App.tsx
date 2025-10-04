@@ -1,6 +1,8 @@
 // src/App.tsx
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import './desktop.css';
+import './mobile.css';
 // CORRECTED: 'useElevatorGame' is a folder, assuming main file inside is 'useElevatorGame.ts' or 'useElevatorGame.tsx'
 import { useElevatorGame } from '../hooks/useElevatorGame';
 // CORRECTED: 'Elevator' is a component file directly in 'components' folder, add explicit '.tsx'
@@ -494,7 +496,7 @@ const App: React.FC = () => {
     return (
         <PerformanceProvider>
             <main
-                className="relative flex h-screen w-full flex-col font-sans overflow-hidden bg-slate-950 text-white"
+                className="relative flex h-screen w-full flex-col font-sans overflow-hidden bg-slate-950 text-white desktop-root"
                 style={{ fontFamily: 'Inter, "Chakra Petch", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' }}
                 onDragEnter={handleDragEnter}
                 onDragOver={handleDragOver}
@@ -622,8 +624,13 @@ const App: React.FC = () => {
 
                 <div className="relative z-10 flex flex-1 flex-col items-center min-h-0">
                     <header className="relative z-20 flex w-full flex-shrink-0 items-center justify-between p-4">
-                    <div className="bg-slate-900/50 px-3 py-2.5 rounded-lg flex items-center gap-2 border border-slate-700/50 shadow-md">
-                        <span className="text-cyan-300 font-bold text-lg" style={{ textShadow: '0 0 6px rgba(34,211,238,0.9), 0 0 14px rgba(34,211,238,0.6)' }}>
+                    <div className="px-4 py-3 rounded-xl flex items-center gap-2 border shadow-md"
+                         style={{
+                           background: 'rgba(2,6,23,0.6)',
+                           borderColor: 'rgba(34,211,238,0.45)',
+                           boxShadow: '0 0 16px rgba(34,211,238,0.25)'
+                         }}>
+                        <span className="text-cyan-300 font-bold text-2xl" style={{ textShadow: '0 0 6px rgba(34,211,238,0.9), 0 0 14px rgba(34,211,238,0.6)' }}>
                         {formatCurrency(game.balance)}
                         </span>
                     </div>
@@ -691,20 +698,25 @@ const App: React.FC = () => {
                     </header>
 
                     {/* Desktop Layout */}
-                    <div className="relative hidden h-full w-full max-w-[1600px] justify-center gap-12 px-4 lg:flex xl:gap-16 xl:px-8 items-center">
-                    <aside className="w-full max-w-[250px] flex-shrink-0 xl:max-w-[300px]">
+                    <div className="relative hidden h-full w-full max-w-[1600px] justify-center px-4 lg:flex xl:px-8 items-center desktop-3col">
+                    <aside className="w-full max-w-[250px] flex-shrink-0 xl:max-w-[300px] desktop-left">
                         <StatsAndHistoryPanel history={game.history} sessionProfit={game.sessionProfit} formatCurrency={formatCurrency} />
                     </aside>
-                    <section className="flex h-full max-w-[480px] flex-shrink-0 flex-col items-center justify-center xl:max-w-lg">
-                        <div className="flex flex-col items-center relative w-full gap-4">
-                        <div className="w-44 sm:w-64 lg:w-80 xl:w-96 flex items-center justify-center">
-                            <ElevatorIndicator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
-                        </div>
-                        <Elevator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
-                        <RecentResultsBar history={game.history} />
+                    <section className={`flex h-full max-w+[480px] flex-shrink-0 flex-col items-center justify-center xl:max-w-lg`}>
+                        <div className={`flex flex-col items-center relative w-full gap-4 ${game.isBonusBuy ? 'panel-cyan-outline panel-cyan-glow rounded-xl p-1' : ''}`}>
+                          {game.isBonusBuy && (
+                            <div className="absolute top-2 right-2 z-20 text-[10px] sm:text-xs tracking-wide px-2 py-1 rounded-full bg-gradient-to-r from-cyan-500/20 to-amber-300/20 text-cyan-200 border border-cyan-300/30 shadow-[0_0_8px_rgba(0,246,255,0.25)]">
+                              ELEVATE MODE ACTIVE
+                            </div>
+                          )}
+                          <div className="relative w-44 sm:w-64 lg:w-80 xl:w-96 flex items-center justify-center">
+                            <ElevatorIndicator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} isElevateActive={game.isBonusBuy} />
+                          </div>
+                          <Elevator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} isElevateActive={game.isBonusBuy} />
+                          <RecentResultsBar history={game.history} formatCurrency={formatCurrency} />
                         </div>
                     </section>
-                    <aside className="w-full max-w-[250px] flex-shrink-0 xl:max-w-[300px]">
+                    <aside className="w-full max-w-[250px] flex-shrink-0 xl:max-w-[300px] desktop-right">
                         <Controls
                         betAmount={game.betAmount}
                         setBetAmount={game.setBetAmount}
@@ -738,10 +750,10 @@ const App: React.FC = () => {
                         {/* Elevator section */}
                         <section className="flex w-full max-w-lg flex-col items-center self-center">
                             <div className="flex flex-col items-center relative w-full gap-4">
-                                <div className="w-44 sm:w-64 flex items-center justify-center">
-                                    <ElevatorIndicator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
+                                <div className="relative w-44 sm:w-64 flex items-center justify-center">
+                                    <ElevatorIndicator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} isElevateActive={game.isBonusBuy} />
                                 </div>
-                                <Elevator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} />
+                                <Elevator gameStatus={game.gameStatus} lastResult={game.lastResult} targetMultiplier={game.targetMultiplier} isInstantBet={isInstantBet} isElevateActive={game.isBonusBuy} />
                             </div>
                         </section>
                         
@@ -785,7 +797,7 @@ const App: React.FC = () => {
                         
                         {/* Recent Results section */}
                         <section className="w-full max-w-lg self-center mt-auto">
-                            <RecentResultsBar history={game.history} />
+                            <RecentResultsBar history={game.history} formatCurrency={formatCurrency} />
                         </section>
                     </div>
 

@@ -8,44 +8,60 @@ interface StatsAndHistoryPanelProps {
     onClose?: () => void; // Optional close handler for mobile view
 }
 
-const HistoryGraph: React.FC<{ history: HistoryEntry[] }> = ({ history }) => {
-    // We want to display from oldest to newest, so we reverse the array.
-    const displayHistory = [...history].reverse();
-    
-    const maxLog = Math.log(1000); // Use a reasonable max for scaling, e.g., 1000x
+const HistoryGraph: React.FC<{ history: HistoryEntry[], formatCurrency: (n: number) => string }> = ({ history, formatCurrency }) => {
+    // Oldest → newest
+    const ordered = [...history].reverse();
+    const points = [] as { x: number; y: number; tooltip: string }[];
+    let cum = 0;
 
-    const calculateYPosition = (multiplier: number) => {
-        if (multiplier < 1) return 0;
-        // Use a logarithmic scale to make smaller multipliers visible and prevent huge ones from breaking the layout
-        const logValue = Math.log(multiplier);
-        const yPos = (logValue / maxLog) * 100;
-        return Math.min(yPos, 100); // Cap at 100%
-    }
+    ordered.forEach((e, i) => {
+        const delta = typeof e.profitChange === 'number' ? e.profitChange : 0;
+        cum += delta;
+        points.push({ x: i, y: cum, tooltip: `${formatCurrency(e.effectiveCost ?? 0)} → ${formatCurrency(e.outcomeAmount ?? 0)} (${formatCurrency(delta)})` });
+    });
+
+    const w = 420; // logical width
+    const h = 140; // logical height
+    const pad = 10;
+    const minY = Math.min(0, ...points.map(p => p.y));
+    const maxY = Math.max(0, ...points.map(p => p.y));
+    const spanY = Math.max(1, maxY - minY);
+    const scaleX = points.length > 1 ? (w - pad * 2) / (points.length - 1) : 1;
+    const scaleY = (h - pad * 2) / spanY;
+
+    const poly = points.map((p, i) => {
+        const x = pad + i * scaleX;
+        const y = h - pad - (p.y - minY) * scaleY;
+        return `${x},${y}`;
+    }).join(' ');
 
     return (
-        <div className="h-44 bg-slate-950/50 rounded-lg p-3 relative border border-slate-700/50 flex items-end justify-around shadow-inner">
-             {/* Background grid lines */}
-             <div className="absolute inset-0 flex flex-col justify-between p-3 pointer-events-none">
-                <div className="w-full border-t border-dashed border-slate-700/50"></div>
-                <div className="w-full border-t border-dashed border-slate-700/50"></div>
-                <div className="w-full border-t border-dashed border-slate-700/50"></div>
-             </div>
-             {displayHistory.map((entry, index) => {
-                const y = calculateYPosition(entry.multiplier);
-                const colorClass = entry.isWin ? 'bg-green-400 shadow-[0_0_12px_3px_rgba(74,222,128,0.55)]' : 'bg-red-500 shadow-[0_0_12px_3px_rgba(239,68,68,0.55)]';
-
-                return (
-                    <div key={index} className="group relative w-2 h-full flex items-end justify-center">
-                        <div 
-                            className={`w-1.5 h-1.5 rounded-full ${colorClass} transition-all duration-300 animate-dot-pop`}
-                            style={{ bottom: `calc(${y}% - 3px)` }}
-                        ></div>
-                        <div className="absolute bottom-full mb-2 hidden group-hover:block bg-slate-950 px-2 py-1 rounded-md text-xs font-mono whitespace-nowrap z-10">
-                            <span className={entry.isWin ? 'text-green-400' : 'text-red-500'}>{entry.multiplier.toFixed(2)}x</span>
-                        </div>
-                    </div>
-                )
-             })}
+        <div className="h-44 bg-slate-950/50 rounded-lg p-3 relative border border-slate-700/50 shadow-inner">
+            <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full">
+                {/* grid */}
+                <g stroke="#334155" strokeDasharray="4 4" opacity="0.5">
+                    <line x1="0" y1={h/2} x2={w} y2={h/2} />
+                    <line x1="0" y1={pad} x2={w} y2={pad} />
+                    <line x1="0" y1={h-pad} x2={w} y2={h-pad} />
+                </g>
+                {/* zero line */}
+                {minY < 0 && maxY > 0 && (
+                    <line x1="0" y1={h - pad - (0 - minY) * scaleY} x2={w} y2={h - pad - (0 - minY) * scaleY} stroke="#22d3ee" opacity="0.25" />
+                )}
+                {/* path */}
+                <polyline points={poly} fill="none" stroke="#22d3ee" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 6px rgba(34,211,238,0.45))' }} />
+                {/* markers */}
+                {points.map((p, i) => {
+                    const x = pad + i * scaleX;
+                    const y = h - pad - (p.y - minY) * scaleY;
+                    return (
+                        <g key={i}>
+                            <circle cx={x} cy={y} r="2.5" fill="#67e8f9" />
+                            <title>{p.tooltip}</title>
+                        </g>
+                    );
+                })}
+            </svg>
         </div>
     );
 };
@@ -96,7 +112,7 @@ const StatsAndHistoryPanel: React.FC<StatsAndHistoryPanelProps> = ({ history, se
                 </div>
             </div>
             
-            <HistoryGraph history={history} />
+            <HistoryGraph history={history} formatCurrency={formatCurrency} />
         </div>
     );
 };

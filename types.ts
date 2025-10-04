@@ -11,6 +11,11 @@ export enum GameStatus {
 export interface HistoryEntry {
   multiplier: number;
   isWin: boolean;
+  // amounts for UI/analytics
+  betAmount?: number;        // base bet amount (without elevate markup)
+  outcomeAmount?: number;    // win amount (0 if loss)
+  effectiveCost?: number;    // debited cost (includes elevate markup when enabled)
+  profitChange?: number;     // outcomeAmount - effectiveCost
   // Provably Fair data
   serverSeed: string;
   clientSeed: string;

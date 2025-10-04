@@ -284,9 +284,15 @@ export const useElevatorGame = (isInstantBet: boolean) => {
         isBonusBuy,
       });
 
+      const winAmount = betResult.isWin ? bet * target : 0;
+      const profitChange = betResult.isWin ? winAmount - effectiveCost : -effectiveCost;
       const entry: HistoryEntry = {
         multiplier: betResult.multiplier,
         isWin: betResult.isWin,
+        betAmount: bet,
+        outcomeAmount: winAmount,
+        effectiveCost: effectiveCost,
+        profitChange,
         serverSeed: betResult.serverSeed,
         clientSeed: clientSeed,
         nonce: nonce,
@@ -297,10 +303,8 @@ export const useElevatorGame = (isInstantBet: boolean) => {
       setNonce(n => n + 1);
       
       // Calculate win amount and update balance manually (don't trust backend newBalance)
-      const winAmount = betResult.isWin ? bet * target : 0;
       setBalance(currentBalance - effectiveCost + winAmount);
       
-      const profitChange = betResult.isWin ? winAmount - effectiveCost : -effectiveCost;
       setSessionProfit(prev => prev + profitChange);
 
       if (betResult.isWin) {

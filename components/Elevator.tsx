@@ -22,13 +22,15 @@ interface ElevatorProps {
   lastResult: HistoryEntry | null;
   targetMultiplier: string;
   isInstantBet: boolean;
+  isElevateActive?: boolean;
 }
 
 const Elevator: React.FC<ElevatorProps> = ({ 
     gameStatus, 
     lastResult, 
     targetMultiplier, 
-    isInstantBet
+    isInstantBet,
+    isElevateActive = false
 }) => {
   /* ------------------------------------------------------------ */
   /*          Performance profile (max FPS based throttling)      */
@@ -108,6 +110,26 @@ const Elevator: React.FC<ElevatorProps> = ({
             <div className="absolute inset-2 bg-slate-800 rounded-t-md overflow-hidden border border-black/50 grated-floor">
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-600 to-slate-800 opacity-80"></div>
                 <StructuralBeams />
+                {/* Elevate Mode: vertical rising beams inside shaft */}
+                {isElevateActive && (
+                  <div className="pointer-events-none absolute inset-0 mix-blend-screen opacity-70">
+                    <style>{`
+                      @keyframes riseBeam { from { transform: translateY(100%); opacity:.0 } to { transform: translateY(-120%); opacity:.12 } }
+                    `}</style>
+                    {[0,1,2].map(i => (
+                      <div key={i}
+                           className="absolute left-0 right-0 h-[55%] mx-auto w-[62%]"
+                           style={{
+                             top: '0%',
+                             filter: 'blur(2px)',
+                             animation: `riseBeam ${5 + i}s linear ${i * 0.6}s infinite`,
+                             background: 'linear-gradient(to top, rgba(99,227,255,0.00) 0%, rgba(99,227,255,0.18) 35%, rgba(255,247,133,0.22) 60%, rgba(99,227,255,0.10) 85%, rgba(99,227,255,0.00) 100%)',
+                             maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)'
+                           }}
+                      />
+                    ))}
+                  </div>
+                )}
                 {/* Cyan indicator bar (glow) */}
                 <div className="absolute top-0 left-0 right-0 h-4 flex items-center justify-center">
                     <div className="w-24 h-1.5 rounded-full"
@@ -133,6 +155,8 @@ const Elevator: React.FC<ElevatorProps> = ({
 
             {/* Elevator Door Container */}
             <div className="absolute inset-2 overflow-hidden rounded-t-md shadow-[0_0_20px_rgba(0,246,255,0.35),_inset_0_0_14px_rgba(0,246,255,0.18)]">
+                {/* Center door seam */}
+                <div className="pointer-events-none absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] bg-black z-20"></div>
                 {/* Left Door */}
                 <div
                 className="absolute top-0 bottom-0 left-0 w-1/2 bg-slate-700 transition-transform ease-in-out"
@@ -167,11 +191,24 @@ const Elevator: React.FC<ElevatorProps> = ({
                 </div>
             </div>
 
-            {/* Left Light Bar */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-[-18px] h-[86%] w-[10px] rounded-full bg-gradient-to-b from-[#5CF1FF] via-[#4BE8FF] to-[#5CF1FF] shadow-[0_0_24px_6px_rgba(0,246,255,0.35)]"></div>
+            {/* Idle ambient light beams (subtle) */}
+            {gameStatus === GameStatus.IDLE && (
+                <div className="pointer-events-none absolute inset-2 rounded-t-md overflow-hidden">
+                    <style>{`
+                        @keyframes ambientSweep { 0%{opacity:.06; transform:translateX(-120%)} 50%{opacity:.12} 100%{opacity:.06; transform:translateX(120%)} }
+                    `}</style>
+                    <div className="absolute top-[10%] bottom-[10%] left-0 w-1/2 skew-x-[-12deg] bg-gradient-to-r from-white/5 via-white/8 to-transparent"
+                         style={{ animation: 'ambientSweep 6s linear infinite' }} />
+                </div>
+            )}
 
-            {/* Right Light Bar */}
-            <div className="absolute top-1/2 -translate-y-1/2 right-[-18px] h-[86%] w-[10px] rounded-full bg-gradient-to-b from-[#5CF1FF] via-[#4BE8FF] to-[#5CF1FF] shadow-[0_0_24px_6px_rgba(0,246,255,0.35)]"></div>
+            {/* Left Light Bar (softened in Elevate Mode) */}
+            <div className={`absolute top-1/2 -translate-y-1/2 left-[-18px] h-[86%] w-[10px] rounded-full bg-gradient-to-b from-[#5CF1FF] via-[#4BE8FF] to-[#5CF1FF] ${isElevateActive ? 'opacity-80' : ''}`}
+                 style={isElevateActive ? { boxShadow: '0 0 26px 8px rgba(0,246,255,0.32)', filter: 'blur(0.7px)' } : { boxShadow: '0 0 24px 6px rgba(0,246,255,0.35)' }}></div>
+
+            {/* Right Light Bar (softened in Elevate Mode) */}
+            <div className={`absolute top-1/2 -translate-y-1/2 right-[-18px] h-[86%] w-[10px] rounded-full bg-gradient-to-b from-[#5CF1FF] via-[#4BE8FF] to-[#5CF1FF] ${isElevateActive ? 'opacity-80' : ''}`}
+                 style={isElevateActive ? { boxShadow: '0 0 26px 8px rgba(0,246,255,0.32)', filter: 'blur(0.7px)' } : { boxShadow: '0 0 24px 6px rgba(0,246,255,0.35)' }}></div>
         </div>
     </div>
   );

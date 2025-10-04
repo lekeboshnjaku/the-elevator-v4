@@ -3,9 +3,10 @@ import { HistoryEntry } from '../types';
 
 interface RecentResultsBarProps {
   history: HistoryEntry[];
+  formatCurrency: (n: number) => string;
 }
 
-const RecentResultsBar: React.FC<RecentResultsBarProps> = ({ history }) => {
+const RecentResultsBar: React.FC<RecentResultsBarProps> = ({ history, formatCurrency }) => {
   /* -----------------------------------------------------------
      Take the newest 5 results (index 0 = newest) and display
      them oldest ➜ newest (left ➜ right).  Newest entry gets a
@@ -29,6 +30,12 @@ const RecentResultsBar: React.FC<RecentResultsBarProps> = ({ history }) => {
         .animate-result-pop {
           animation: result-pop 0.35s ease-out;
         }
+        @keyframes gold-flash { 
+          0% { box-shadow: 0 0 0 rgba(255,215,99,0); }
+          30% { box-shadow: 0 0 16px rgba(255,215,99,0.65), 0 0 30px rgba(255,247,133,0.45); }
+          100% { box-shadow: 0 0 0 rgba(255,215,99,0); }
+        }
+        .animate-gold-flash { animation: gold-flash 650ms ease-out; }
       `}</style>
       <div className="bg-slate-950/50 border border-cyan-400/40 rounded-lg shadow-[0_0_12px_rgba(0,246,255,0.18)] px-3 py-2">
         <div className="flex items-center justify-between pb-1">
@@ -45,11 +52,15 @@ const RecentResultsBar: React.FC<RecentResultsBarProps> = ({ history }) => {
               const color = entry.isWin
                 ? '!text-green-300 !bg-green-900/30 !border-green-500/60 shadow-[0_0_10px_rgba(74,222,128,0.25)]'
                 : '!text-red-300 !bg-red-900/30 !border-red-500/60 shadow-[0_0_10px_rgba(239,68,68,0.25)]';
+              const tooltip = entry.betAmount !== undefined && entry.outcomeAmount !== undefined
+                ? `Bet ${formatCurrency(entry.betAmount)} → ${formatCurrency(entry.outcomeAmount)}`
+                : `${entry.isWin ? 'Win' : 'Loss'} at ${entry.multiplier.toFixed(2)}x`;
+              const goldFlash = entry.multiplier >= 10000;
               return (
                 <div
                   key={idx}
-                  className={`h-8 sm:h-9 w-full rounded-md border font-mono font-semibold text-[11px] sm:text-sm grid place-items-center ${color} ${entry === newest ? 'animate-result-pop' : ''}`}
-                  title={`${entry.isWin ? 'Win' : 'Loss'} at ${entry.multiplier.toFixed(2)}x`}
+                  className={`h-8 sm:h-9 w-full rounded-md border font-mono font-semibold text-[11px] sm:text-sm grid place-items-center ${color} ${entry === newest ? 'animate-result-pop' : ''} ${goldFlash ? 'animate-gold-flash' : ''}`}
+                  title={tooltip}
                   style={{
                     color: entry.isWin ? '#86efac' : '#fca5a5',
                     borderColor: entry.isWin ? '#22c55e99' : '#ef444499',
