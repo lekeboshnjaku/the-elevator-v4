@@ -31,6 +31,57 @@ interface ControlsProps {
   t: (key: string, ...args: any[]) => string;
 }
 
+type ModeKey = 'base' | 'elevate';
+
+const MODE_META: Record<ModeKey, { label: string; cost: number; rtp: number; min: number; max: number; hitRate?: number; volatility: 'low' | 'high'; }> = {
+  base: {
+    label: 'Base',
+    cost: 1.0,
+    rtp: 98.0,
+    min: 98,
+    max: 1000000, // 10,000x
+    volatility: 'low'
+  },
+  elevate: {
+    label: 'Elevate',
+    cost: 3.0,
+    rtp: 98.0,
+    min: 274,
+    max: 10000000, // 100,000x
+    hitRate: 0.30,
+    volatility: 'high'
+  }
+}
+
+const ModeChip: React.FC<{ active: boolean; label: string; sublabel: string; onClick: () => void; tone: 'low' | 'high'; }>=({ active, label, sublabel, onClick, tone })=>{
+  const activeClass = active ? 'ring-2 ring-cyan-400/80 shadow-[0_0_16px_rgba(0,246,255,0.35)]' : 'ring-1 ring-slate-700 hover:ring-slate-500';
+  const toneClass = tone === 'low' ? 'bg-slate-900/60' : 'bg-gradient-to-br from-fuchsia-900/30 via-cyan-900/20 to-indigo-900/30';
+  return (
+    <button onClick={onClick} className={`px-3 py-2 rounded-lg text-left text-white transition-all ${activeClass} ${toneClass}`}>
+      <div className="text-sm font-bold tracking-wide">{label}</div>
+      <div className="text-[11px] opacity-80">{sublabel}</div>
+    </button>
+  );
+}
+
+const ModeInfoPill: React.FC<{ mode: ModeKey }>=({ mode })=>{
+  const m = MODE_META[mode];
+  const volColor = mode === 'base' ? 'text-emerald-400' : 'text-orange-300';
+  return (
+    <div className="w-full bg-slate-950/60 border border-slate-700 rounded-md px-3 py-2 flex flex-wrap items-center gap-3 text-[12px] text-slate-200">
+      <span className={`font-semibold uppercase tracking-wider ${volColor}`}>{m.label}</span>
+      <span className="opacity-80">Cost: <b>{m.cost.toFixed(1)}</b></span>
+      <span className="opacity-80">RTP: <b>{m.rtp.toFixed(2)}%</b></span>
+      <span className="opacity-80">Min: <b>{(m.min/100).toFixed(2)}x</b></span>
+      <span className="opacity-80">Max: <b>{(m.max/100).toLocaleString()}x</b></span>
+      {m.hitRate !== undefined && (
+        <span className="opacity-80">Hit: <b>{(m.hitRate*100).toFixed(0)}%</b></span>
+      )}
+      <span className="ml-auto text-[11px] opacity-60">Volatility: {m.volatility}</span>
+    </div>
+  );
+}
+
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
         onClick={onClick}
@@ -118,7 +169,7 @@ const ManualBetPanel: React.FC<
         }
     };
 
-    // Handle Elevate Mode toggle with SFX
+    // Keep legacy elevate toggle available (mapped to props.isBonusBuy)
     const handleElevateToggle = () => {
         if (!props.isBonusBuy) {
             sfxService.playActivate();
@@ -177,7 +228,7 @@ const ManualBetPanel: React.FC<
                 props.isBonusBuy ? 'elevate-hero-btn--active animate-cyan-pulse-soft' : ''
               }`}
             >
-              Elevate Mode
+              {props.isBonusBuy ? 'Elevate Selected' : 'Switch to Elevate'}
             </button>
         </div>
     );
@@ -346,6 +397,19 @@ const Controls: React.FC<ControlsProps> = (props) => {
       stopOnLoss: null,
   });
 
+  // Mode selection state uses props.isBonusBuy as source of truth to avoid desync
+  const currentMode: ModeKey = props.isBonusBuy ? 'elevate' : 'base';
+
+  const selectMode = (mode: ModeKey) => {
+    if (mode === 'elevate' && !props.isBonusBuy) {
+      sfxService.playActivate();
+      props.toggleBonusBuy();
+    } else if (mode === 'base' && props.isBonusBuy) {
+      sfxService.playDeactivate();
+      props.toggleBonusBuy();
+    }
+  }
+
   const handleMainButtonClick = () => {
     if (isAutoBetting) {
         stopAutoBet();
@@ -397,6 +461,27 @@ const Controls: React.FC<ControlsProps> = (props) => {
             </div>
 
             <div className="p-3.5 sm:p-4 space-y-1.5 sm:space-y-4">
+                {/* Mode selector chips */}
+                <div className="grid grid-cols-2 gap-2">
+                  <ModeChip
+                    active={currentMode==='base'}
+                    label={`Base • Cost ${MODE_META.base.cost.toFixed(1)}`}
+                    sublabel={`Low volatility • Max ${(MODE_META.base.max/100).toLocaleString()}x`}
+                    tone="low"
+                    onClick={()=>selectMode('base')}
+                  />
+                  <ModeChip
+                    active={currentMode==='elevate'}
+                    label={`Elevate • Cost ${MODE_META.elevate.cost.toFixed(1)}`}
+                    sublabel={`High volatility • ~${(MODE_META.elevate.hitRate!*100).toFixed(0)}% hit • Max ${(MODE_META.elevate.max/100).toLocaleString()}x`}
+                    tone="high"
+                    onClick={()=>selectMode('elevate')}
+                  />
+                </div>
+
+                {/* Mode info pill */}
+                <ModeInfoPill mode={currentMode} />
+
                 {activeTab === 'manual' ? (
                     <ManualBetPanel {...props} />
                 ) : (
