@@ -35,7 +35,7 @@ export const ProvablyFairControls: React.FC<ProvablyFairControlsProps> = ({
                  <div className="space-y-1">
                     <label className="text-slate-400">Server Seed (Hashed)</label>
                     <p className="bg-slate-900 p-2 rounded break-all font-mono text-slate-400 text-xs">
-                        {serverSeedHash || 'Generating...'}
+                        {serverSeedHash || 'Generating…'}
                     </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">

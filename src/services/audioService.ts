@@ -45,15 +45,15 @@ class AudioService {
     private operatorVoicemails: string[][] = [
         ["You have reached the operator. Due to atmospheric disturbances, all lines are currently unavailable. We apologize for the inconvenience."],
         ["This is an automated message. The operator is currently indisposed. Please remain calm and continue to your destination."],
-        ["Thank you for calling.", "All of our operators are currently experiencing...", "technical difficulties.", "Your call is not important to us.", "Please enjoy the ride."],
-        ["Connection failed.", "The operator cannot be reached at this time.", "Please try again later.", "Or... don't."],
-        ["Please be advised... floors 13 through 42 are currently experiencing... reality fluctuations.", "Please keep all limbs inside the elevator at all times."],
-        ["We are experiencing higher than normal call volumes.", "Your estimated wait time is...", "forever.", "Please hold."],
-        ["Did you remember to file your productivity reports?", "Failure to comply may result in...", "disciplinary action.", "Enjoy the ascent."],
+        ["Thank you for calling.", "All of our operators are currently experiencing…", "technical difficulties.", "Your call is not important to us.", "Please enjoy the ride."],
+        ["Connection failed.", "The operator cannot be reached at this time.", "Please try again later.", "Or… don't."],
+        ["Please be advised… floors 13 through 42 are currently experiencing… reality fluctuations.", "Please keep all limbs inside the elevator at all times."],
+        ["We are experiencing higher than normal call volumes.", "Your estimated wait time is…", "forever.", "Please hold."],
+        ["Did you remember to file your productivity reports?", "Failure to comply may result in…", "disciplinary action.", "Enjoy the ascent."],
         // New short/single-word lines for variety
         ["Proceeding."],
         ["Calculating."],
-        ["Risk assessment... nominal."],
+        ["Risk assessment… nominal."],
         ["Hold."],
         ["Monitoring."],
         ["Unforeseen variables detected."],
@@ -84,7 +84,7 @@ class AudioService {
 
             this._loadVoices();
         } catch (e) {
-            console.error("Web Audio API is not supported or failed to init.", e);
+            console.error("Web Audio API is not supported or failed to initialize.", e);
         }
     }
 

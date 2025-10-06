@@ -82,7 +82,7 @@ const HistoryItem: React.FC<{ entry: HistoryEntry }> = ({ entry }) => {
 const HistoryBar: React.FC<HistoryBarProps> = ({ history }) => {
   return (
     <div className="flex justify-evenly items-center gap-1 sm:gap-2 bg-slate-900/50 p-2 rounded-lg shadow-inner border border-slate-700/50 w-full">
-        {history.length === 0 && <span className="text-sm text-slate-500 px-4 whitespace-nowrap">Previous results will appear here...</span>}
+        {history.length === 0 && <span className="text-sm text-slate-500 px-4 whitespace-nowrap">Previous results will appear here…</span>}
         {history.slice(0, 5).map((entry, index) => (
             <HistoryItem key={index} entry={entry} />
         ))}

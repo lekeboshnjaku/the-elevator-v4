@@ -45,14 +45,14 @@ const ElevatorIndicator: React.FC<ElevatorIndicatorProps> = ({ gameStatus, lastR
                 textColorClass = 'accent neon';
                 content = (
                     <>
-                        <p className="text-sm uppercase tracking-widest opacity-70">Resolving...</p>
+                        <p className="text-sm uppercase tracking-widest opacity-70">Resolving…</p>
                         <p className="text-5xl font-bold leading-none -mt-1 transition-transform duration-300">{parseFloat(targetMultiplier).toFixed(2)}x</p>
                     </>
                 );
             } else {
                 content = (
                     <>
-                        <p className="text-sm uppercase tracking-widest opacity-70">Ascending...</p>
+                        <p className="text-sm uppercase tracking-widest opacity-70">Ascending…</p>
                         <p className="text-5xl font-bold leading-none -mt-1 transition-transform duration-300">{floor.toFixed(2)}x</p>
                     </>
                 );

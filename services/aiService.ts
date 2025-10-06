@@ -3,7 +3,7 @@
 class AiService {
     // A list of pre-approved, witty lines for ambient chatter.
     private wittyLines: string[] = [
-        "Please hold... not that I care if you fall.",
+        "Please hold… not that I care if you fall.",
         "Going up? Unlike your paycheck.",
         "If the elevator stops suddenly, just scream louder. That usually fixes it.",
         "For complaints, press 9. Oh wait… this phone doesn’t have a 9.",
@@ -26,13 +26,13 @@ class AiService {
         "An adequate session. The numbers have been crunched. They weren't impressive.",
         "The results are in. Let's just say there's room for improvement.",
         "Performance metrics analyzed. The machine remains unimpressed.",
-        "You certainly... clicked some buttons. The data reflects this.",
+        "You certainly… clicked some buttons. The data reflects this.",
         "Another session complete. Don't forget to fill out your TPS reports.",
-        "We've reviewed your session. It was... a session.",
+        "We've reviewed your session. It was… a session.",
         "Your efforts have been noted and filed accordingly. Under 'Miscellaneous'.",
         "The numbers don't lie. But they're not exactly singing your praises, either.",
         "Conclusion: You participated. Congratulations.",
-        "Your productivity has been measured against the baseline. It was... baseline.",
+        "Your productivity has been measured against the baseline. It was… baseline.",
         "The quarterly review is in. You are meeting expectations. Barely."
     ];
     
