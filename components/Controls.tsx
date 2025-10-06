@@ -70,7 +70,6 @@ const ModeInfoPill: React.FC<{ mode: ModeKey }>=({ mode })=>{
   return (
     <div className="w-full bg-slate-950/60 border border-slate-700 rounded-md px-3 py-2 flex flex-wrap items-center gap-3 text-[12px] text-slate-200">
       <span className={`font-semibold uppercase tracking-wider ${volColor}`}>{m.label}</span>
-      <span className="opacity-80">Cost: <b>{m.cost.toFixed(1)}</b></span>
       <span className="opacity-80">RTP: <b>{m.rtp.toFixed(2)}%</b></span>
       <span className="opacity-80">Min: <b>{(m.min/100).toFixed(2)}x</b></span>
       <span className="opacity-80">Max: <b>{(m.max/100).toLocaleString()}x</b></span>
@@ -314,11 +313,11 @@ const AutoBetConditionControl: React.FC<{
         </span>
 
         {/* Row: select + (optional) input + % */}
-        <div className="flex items-center justify-start gap-2 sm:gap-3">
+        <div className="flex items-center justify-start gap-2 sm:gap-3 w-full min-w-0">
             <select
                 value={props.action}
                 onChange={(e) => props.onActionChange(e.target.value as AutoBetAction)}
-                className="bg-transparent text-white font-mono text-sm focus:outline-none py-1 pr-6 pl-1 appearance-none"
+                className="bg-transparent text-white font-mono text-sm focus:outline-none py-1 pr-6 pl-1 appearance-none shrink-0"
                 disabled={props.disabled}
             >
                 <option value={AutoBetAction.RESET}>Reset</option>
@@ -327,13 +326,13 @@ const AutoBetConditionControl: React.FC<{
 
             {props.action === AutoBetAction.INCREASE_BY && (
                 <>
-                <input
-                    type="number"
-                    value={props.value}
-                    onChange={(e) => props.onValueChange(e.target.value)}
-                    className="w-20 sm:w-24 shrink-0 px-2 bg-transparent text-white font-mono text-sm text-right focus:outline-none overflow-hidden"
-                    disabled={props.disabled}
-                />
+                    <input
+                        type="number"
+                        value={props.value}
+                        onChange={(e) => props.onValueChange(e.target.value)}
+                        className="flex-1 min-w-0 px-2 bg-transparent text-white font-mono text-sm text-right focus:outline-none"
+                        disabled={props.disabled}
+                    />
                     <span className="text-slate-400 text-sm shrink-0 pl-0.5">%</span>
                 </>
             )}
@@ -465,14 +464,14 @@ const Controls: React.FC<ControlsProps> = (props) => {
                 <div className="grid grid-cols-2 gap-2">
                   <ModeChip
                     active={currentMode==='base'}
-                    label={`Base • Cost ${MODE_META.base.cost.toFixed(1)}`}
+                    label={`Base`}
                     sublabel={`Low volatility • Max ${(MODE_META.base.max/100).toLocaleString()}x`}
                     tone="low"
                     onClick={()=>selectMode('base')}
                   />
                   <ModeChip
                     active={currentMode==='elevate'}
-                    label={`Elevate • Cost ${MODE_META.elevate.cost.toFixed(1)}`}
+                    label={`Elevate`}
                     sublabel={`High volatility • ~${(MODE_META.elevate.hitRate!*100).toFixed(0)}% hit • Max ${(MODE_META.elevate.max/100).toLocaleString()}x`}
                     tone="high"
                     onClick={()=>selectMode('elevate')}
