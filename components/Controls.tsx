@@ -317,7 +317,7 @@ const AutoBetConditionControl: React.FC<{
             <select
                 value={props.action}
                 onChange={(e) => props.onActionChange(e.target.value as AutoBetAction)}
-                className="bg-transparent text-white font-mono text-sm focus:outline-none py-1 pr-6 pl-1 appearance-none shrink-0"
+                className="bg-transparent text-white font-mono text-sm sm:text-lg focus:outline-none py-1 pr-6 pl-1 appearance-none shrink-0"
                 disabled={props.disabled}
             >
                 <option value={AutoBetAction.RESET}>Reset</option>
@@ -330,10 +330,10 @@ const AutoBetConditionControl: React.FC<{
                         type="number"
                         value={props.value}
                         onChange={(e) => props.onValueChange(e.target.value)}
-                        className="flex-1 min-w-0 px-2 bg-transparent text-white font-mono text-sm text-right focus:outline-none"
+                        className="flex-1 min-w-0 px-2 bg-transparent text-white font-mono text-sm sm:text-lg text-right focus:outline-none"
                         disabled={props.disabled}
                     />
-                    <span className="text-slate-400 text-sm shrink-0 pl-0.5">%</span>
+                    <span className="text-slate-400 text-sm sm:text-lg shrink-0 pl-0.5">%</span>
                 </>
             )}
         </div>
@@ -460,26 +460,7 @@ const Controls: React.FC<ControlsProps> = (props) => {
             </div>
 
             <div className="p-3.5 sm:p-4 space-y-1.5 sm:space-y-4">
-                {/* Mode selector chips */}
-                <div className="grid grid-cols-2 gap-2">
-                  <ModeChip
-                    active={currentMode==='base'}
-                    label={`Base`}
-                    sublabel={`Low volatility • Max ${(MODE_META.base.max/100).toLocaleString()}x`}
-                    tone="low"
-                    onClick={()=>selectMode('base')}
-                  />
-                  <ModeChip
-                    active={currentMode==='elevate'}
-                    label={`Elevate`}
-                    sublabel={`High volatility • ~${(MODE_META.elevate.hitRate!*100).toFixed(0)}% hit • Max ${(MODE_META.elevate.max/100).toLocaleString()}x`}
-                    tone="high"
-                    onClick={()=>selectMode('elevate')}
-                  />
-                </div>
-
-                {/* Mode info pill */}
-                <ModeInfoPill mode={currentMode} />
+                {/* Mode selector and info pill removed per request */}
 
                 {activeTab === 'manual' ? (
                     <ManualBetPanel {...props} />
