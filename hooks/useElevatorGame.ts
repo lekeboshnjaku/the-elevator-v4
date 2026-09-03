@@ -29,7 +29,7 @@ export const useElevatorGame = (isInstantBet: boolean) => {
   const [lastResult, setLastResult] = useState<HistoryEntry | null>(null);
   const [lastWinAmount, setLastWinAmount] = useState<number>(0);
   const [isBonusBuy, setIsBonusBuy] = useState<boolean>(false);
-  const [elevateCost, setElevateCost] = useState<number>(1.2);
+  const [elevateCost, setElevateCost] = useState<number>(3.0);
 
   // --- State from Backend ---
   const [clientSeed, setClientSeed] = useState<string>('');

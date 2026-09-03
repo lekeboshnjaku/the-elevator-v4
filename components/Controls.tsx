@@ -26,7 +26,9 @@ interface ControlsProps {
   /* --- NEW Bonus-Buy props --- */
   isBonusBuy: boolean;
   toggleBonusBuy: () => void;
-  /** Effective bet after +20 % markup, already rounded in hook */
+  /** Cost multiplier applied by Elevate Mode (3.0 = 200 % surcharge) */
+  elevateCost: number;
+  /** Effective bet after the Elevate markup, already rounded in the hook */
   effectiveBetAmount: number;
   t: (key: string, ...args: any[]) => string;
 }
@@ -81,19 +83,23 @@ const ManualBetPanel: React.FC<
         | 't'
         | 'isBonusBuy'
         | 'toggleBonusBuy'
+        | 'elevateCost'
         | 'effectiveBetAmount'
     >
 > = (props) => {
     const handleBetAmountAction = (action: 'min' | 'max' | '/2' | 'x2') => {
         const currentBet = parseFloat(props.betAmount) || 0;
+        // Elevate Mode charges betAmount * elevateCost, so cap the base bet so
+        // the effective wager never exceeds the balance.
+        const maxByBalance = props.isBonusBuy ? props.balance / props.elevateCost : props.balance;
         let newBet: number;
         switch (action) {
             case 'min': newBet = 0.01; break;
-            case 'max': newBet = props.maxBet; break; // Use RGS maxBet
+            case 'max': newBet = Math.min(props.maxBet, maxByBalance); break;
             case '/2': newBet = currentBet / 2; break;
             case 'x2': newBet = currentBet * 2; break;
         }
-        const clampedBet = Math.max(0.01, Math.min(props.balance, newBet));
+        const clampedBet = Math.max(0.01, Math.min(props.maxBet, maxByBalance, newBet));
         props.setBetAmount(clampedBet.toFixed(2));
     };
 
@@ -109,9 +115,9 @@ const ManualBetPanel: React.FC<
     const handleBetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const enteredValue = e.target.value;
         if (props.isBonusBuy) {
-            // Convert back to base bet when Elevate Mode is ON
+            // The input shows the effective (marked-up) amount; convert back to base bet.
             const enteredNumber = parseFloat(enteredValue) || 0;
-            const baseBet = enteredNumber / 1.2;
+            const baseBet = enteredNumber / props.elevateCost;
             props.setBetAmount(baseBet.toFixed(2));
         } else {
             props.setBetAmount(enteredValue);
@@ -187,8 +193,9 @@ const AutoBetPanel: React.FC<{
     settings: Omit<AutoBetSettings, 'baseBet'>, 
     setSettings: React.Dispatch<React.SetStateAction<Omit<AutoBetSettings, 'baseBet'>>>, 
     isAutoBetting: boolean,
-    lastAutoBaseBet: number | null
-}> = ({ settings, setSettings, isAutoBetting, lastAutoBaseBet }) => {
+    lastAutoBaseBet: number | null,
+    betAmount: string,
+}> = ({ settings, setSettings, isAutoBetting, lastAutoBaseBet, betAmount }) => {
     const handleValueChange = (field: keyof typeof settings, value: string | number | null | AutoBetAction) => {
         setSettings(prev => ({ ...prev, [field]: value }));
     };
@@ -204,7 +211,7 @@ const AutoBetPanel: React.FC<{
                 />
                 <InputField
                     label="Base Bet"
-                    value={isAutoBetting && lastAutoBaseBet !== null ? lastAutoBaseBet.toFixed(2) : '0.00'}
+                    value={isAutoBetting && lastAutoBaseBet !== null ? lastAutoBaseBet.toFixed(2) : (parseFloat(betAmount) || 0).toFixed(2)}
                     disabled={true}
                 />
             </div>
@@ -315,6 +322,7 @@ const InputField: React.FC<{
                 placeholder={placeholder}
                 inputMode={inputMode}
                 pattern={pattern}
+                aria-label={label}
                 className={`w-full bg-slate-950/50 rounded-md pt-5 pb-2 sm:pt-7 sm:pb-3 px-3 text-white font-mono text-sm sm:text-lg focus:outline-none transition-all border control-field disabled:opacity-50 min-h-[44px] ${isInvalid ? 'ring-2 ring-red-500/70 focus:ring-red-500' : 'focus:ring-2 focus:ring-sky-500 focus:shadow-[0_0_15px_rgba(56,189,248,0.5),_inset_0_0_8px_rgba(56,189,248,0.4)]'} ${inputClassName ?? ''}`}
             />
     </div>
@@ -405,6 +413,7 @@ const Controls: React.FC<ControlsProps> = (props) => {
                         setSettings={setAutoSettings} 
                         isAutoBetting={isAutoBetting}
                         lastAutoBaseBet={lastAutoBaseBet}
+                        betAmount={betAmount}
                     />
                 )}
 
