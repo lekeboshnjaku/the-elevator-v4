@@ -362,7 +362,24 @@ const App: React.FC = () => {
     // Effect for Spacebar functionality
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) {
+            // Never hijack Space while focus is on an interactive control:
+            // native Space/Enter activation already handles buttons and inputs,
+            // and taking over here silently places a bet on top of it.
+            const target = e.target as HTMLElement | null;
+            if (
+                !target ||
+                target instanceof HTMLInputElement ||
+                target instanceof HTMLSelectElement ||
+                target instanceof HTMLTextAreaElement ||
+                target instanceof HTMLButtonElement ||
+                target instanceof HTMLAnchorElement ||
+                target.isContentEditable
+            ) {
+                return;
+            }
+
+            // Don't bet while a modal is open — Space commonly closes one.
+            if (isRulesOpen || isMathOpen || isFairnessOpen || isAchievementsOpen || isRealityCheckVisible) {
                 return;
             }
 
@@ -384,7 +401,7 @@ const App: React.FC = () => {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [game.isAutoBetting, game.gameStatus, game.canBet, game.stopAutoBet, game.placeBet]);
+    }, [game.isAutoBetting, game.gameStatus, game.canBet, game.stopAutoBet, game.placeBet, isRulesOpen, isMathOpen, isFairnessOpen, isAchievementsOpen, isRealityCheckVisible]);
 
     // Utility Panel Functions
     const startUtilityPanelCloseTimer = () => {
@@ -727,6 +744,7 @@ const App: React.FC = () => {
                         isBetAmountInvalid={game.isBetAmountInvalid}
                         isBonusBuy={game.isBonusBuy}
                         toggleBonusBuy={game.toggleBonusBuy}
+                        elevateCost={game.elevateCost}
                         effectiveBetAmount={game.effectiveBetAmount}
                         t={t}
                         />
@@ -769,6 +787,7 @@ const App: React.FC = () => {
                                 isBetAmountInvalid={game.isBetAmountInvalid}
                                 isBonusBuy={game.isBonusBuy}
                                 toggleBonusBuy={game.toggleBonusBuy}
+                                elevateCost={game.elevateCost}
                                 effectiveBetAmount={game.effectiveBetAmount}
                                 t={t}
                             />
